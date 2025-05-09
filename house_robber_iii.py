@@ -28,37 +28,25 @@ class TreeNode:
 
 
 class Solution:
-    def _get_totals(self, node, depth):
-        with_root_total = 0
-        no_root_total = 0
-        if depth % 2:
-            no_root_total += node.val or 0
-            if node.left:
-                w, n = self._get_totals(node.left, depth + 1)
-                with_root_total += w
-                no_root_total += n
-            if node.right:
-                w, n = self._get_totals(node.right, depth + 1)
-                with_root_total += w
-                no_root_total += n
-        else:
-            with_root_total += node.val or 0
-            if node.left:
-                w, n = self._get_totals(node.left, depth + 1)
-                with_root_total += w
-                no_root_total += n
-            if node.right:
-                w, n = self._get_totals(node.right, depth + 1)
-                with_root_total += w
-                no_root_total += n
-        return (with_root_total, no_root_total)
-
     def rob(self, root: Optional[TreeNode]) -> int:
-        with_root_total, no_root_total = self._get_totals(root, 0)
-        return max(with_root_total, no_root_total)
+        if hasattr(root, "with_root_total"):
+            return max(root.with_root_total, root.no_root_total)
+
+        root.with_root_total = root.val or 0
+        root.no_root_total = 0
+        if root.left:
+            root.no_root_total += self.rob(root.left)
+            root.with_root_total += root.left.no_root_total
+        if root.right:
+            root.no_root_total += self.rob(root.right)
+            root.with_root_total += root.right.no_root_total
+
+        return max(root.with_root_total, root.no_root_total)
 
 
 sol = Solution()
+root = TreeNode.from_list([3, 2, 3])
+print(sol.rob(root))
 root = TreeNode.from_list([3, 2, 3, None, 3, None, 1])
 print(sol.rob(root))
 root = TreeNode.from_list([4, 1, None, 2, None, 3]) # should be 7
