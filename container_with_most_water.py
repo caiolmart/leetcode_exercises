@@ -7,21 +7,23 @@ class Solution:
         max_i = 0
         max_j = n - 1
         max_area = min(height[max_i], height[max_j]) * (n - 1)
-        for i in range(n - 1):
-            if height[i] < height[max_i]:
-                continue
-            for j in range(max_j, i, -1):
-                if height[j] < height[max_j]:
-                    continue
-                this_area = min(height[i], height[j]) * (j - i)
+        i = max_i
+        j = max_j
+        while i < j:
+            if height[max_i] <= height[max_j]:
+                while i < j and height[i] <= height[max_i]:
+                    i += 1
+                max_i = i
+                this_area = min(height[max_i], height[max_j]) * (j - i)
                 if this_area > max_area:
                     max_area = this_area
-                    max_i = i
-                    max_j = j
-                
-                if height[j] >= height[i]:
-                    break
-
+            else:
+                while i < j and height[j] <= height[max_j]:
+                    j -= 1
+                max_j = j
+                this_area = min(height[max_i], height[max_j]) * (j - i)
+                if this_area > max_area:
+                    max_area = this_area
         return max_area
 
 
